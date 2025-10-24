@@ -1,12 +1,16 @@
 package racingcar.view;
 
 import camp.nextstep.edu.missionutils.Console;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import racingcar.exception.ErrorMessage;
 
 public class InputView {
+
+    private static final BigInteger MIN_INT_VALUE = BigInteger.valueOf(Integer.MIN_VALUE);
+    private static final BigInteger MAX_INT_VALUE = BigInteger.valueOf(Integer.MAX_VALUE);
 
     private static final String CAR_NAMES_PROMPT = "경주할 자동차 이름을 입력하세요.(이름은 쉼표(,) 기준으로 구분)";
     private static final String ROUNDS_PROMPT = "시도할 횟수는 몇 회인가요?";
@@ -44,9 +48,14 @@ public class InputView {
 
     private int parseRounds(String input) {
         try {
-            return Integer.parseInt(input);
+            BigInteger rounds = new BigInteger(input);
+            if (rounds.compareTo(MIN_INT_VALUE) < 0 || rounds.compareTo(MAX_INT_VALUE) > 0) {
+                throw new IllegalArgumentException(ErrorMessage.OVERFLOW_ROUND_VALUE.getMessage());
+            }
+
+            return rounds.intValue();
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_ROUND_FORMAT.getMessage());
+            throw new IllegalArgumentException(ErrorMessage.INVALID_ROUND_FORMAT.getMessage(), e);
         }
     }
 }

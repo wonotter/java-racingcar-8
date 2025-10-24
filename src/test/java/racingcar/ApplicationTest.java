@@ -151,7 +151,7 @@ class ApplicationTest extends NsTest {
 
         @Test
         @DisplayName("시도 횟수 0 입력")
-        void RoundInput0() {
+        void roundInput0() {
             assertSimpleTest(() ->
                     assertThatThrownBy(() -> runException("pobi,woni", "0"))
                             .isInstanceOf(IllegalArgumentException.class)
@@ -161,12 +161,41 @@ class ApplicationTest extends NsTest {
 
         @Test
         @DisplayName("시도 횟수 음수 입력")
-        void RoundInputNegativeNumber() {
+        void roundInputNegativeNumber() {
             assertSimpleTest(() ->
                     assertThatThrownBy(() -> runException("pobi,woni", "-1"))
                             .isInstanceOf(IllegalArgumentException.class)
                             .hasMessageContaining("시도 횟수는 양수여야 합니다.")
             );
+        }
+
+        @Test
+        @DisplayName("int 최대값 초과")
+        void roundInputExceededNumber() {
+            // Integer.MAX_VALUE = 2147483647
+            assertSimpleTest(() ->
+                    assertThatThrownBy(() -> runException("pobi,woni", "2147483648"))
+                            .isInstanceOf(IllegalArgumentException.class)
+                            .hasMessageContaining("시도 횟수가 int 범위를 벗어났습니다."));
+        }
+
+        @Test
+        @DisplayName("int 최소값 미만")
+        void roundInputMinimumNumber() {
+            // Integer.MIN_VALUE = -2147483648
+            assertSimpleTest(() ->
+                    assertThatThrownBy(() -> runException("pobi,woni", "-2147483649"))
+                            .isInstanceOf(IllegalArgumentException.class)
+                            .hasMessageContaining("시도 횟수가 int 범위를 벗어났습니다."));
+        }
+
+        @Test
+        @DisplayName("매우 큰 숫자 예외")
+        void roundInputVeryBigNumber() {
+            assertSimpleTest(() ->
+                    assertThatThrownBy(() -> runException("pobi,woni", "9999999999999999999"))
+                            .isInstanceOf(IllegalArgumentException.class)
+                            .hasMessageContaining("시도 횟수가 int 범위를 벗어났습니다."));
         }
     }
 
